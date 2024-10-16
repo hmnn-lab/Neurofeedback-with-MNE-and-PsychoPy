@@ -23,7 +23,7 @@ mne.viz.set_browser_backend('qt')
 host = 'mne_stream'
 # the max wait time in seconds until client connection
 wait_max = 5
-
+# 
 
 # Load a file to stream raw data
 xdf_fpath = "C:/Users/varsh/.spyder-py3/random-block-1.xdf"
