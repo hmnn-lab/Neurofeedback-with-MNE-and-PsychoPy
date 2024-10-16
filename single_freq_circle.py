@@ -12,7 +12,7 @@ import pyxdf
 import numpy as np
 
 import matplotlib.pyplot as plt
-xz%gui qt5
+
 
 import mne_realtime
 from mne_realtime import LSLClient, MockLSLStream
@@ -21,15 +21,14 @@ import pylsl
 
 import mne
 #%%
-# Create a window
-mywin = visual.Window([500, 500], monitor="TestMonitor", color=[0, 0, 0], fullscr=True, units="deg")
-
-# Creating quadrants
+# Create a mywindow
+mywin = visual.Window([500, 500], monitor="TestMonitor", color=[0, 0, 0], fullscr=False, units="deg")
+""" Creating quadrants
 line1 = visual.Line(win=mywin, start=(10, 0), end=(-10, 0), units='cm', lineWidth=2.0,pos=(0, 0), size=1.0, anchor='center', ori=0.0, opacity=1.0, contrast=0.5, draggable=True, name='X-ais')
 line1.setColor((1, 1, 1))
 line2 = visual.Line(win=mywin, start=(0, 10), end=(0, -10), units='cm', lineWidth=2.0, pos=(0, 0), size=1.0, anchor='center', ori=0.0, opacity=1.0, contrast=0.5, draggable=True, name='Y-axis')
 line2.setColor((1, 1, 1))
-
+"""
 #Create square window
 sqr = visual.Rect(win=mywin, size=[20, 20], fillColor='black', pos=(0.0,0.0))
 
@@ -85,6 +84,7 @@ pow_change_values = []
 update_interval = 0.5  # seconds
 update_timer = core.CountdownTimer(update_interval)
 
+########## MAIN LOOP NOT WORKING -  PSYCHOPY WINDOW NOT RESPONDING #########
 if __name__ == '__main__':
     with MockLSLStream(host, raw, 'eeg', step):
         with LSLClient(info=raw.info, host=host, wait_max=wait_max) as client:
@@ -92,6 +92,13 @@ if __name__ == '__main__':
             sfreq = int(client_info['sfreq'])
             
             while running:
+                # Poll for keyboard events
+                keys = event.getKeys()
+                if 'escape' in keys:
+                    running = False
+                    np.save(r"C:\Users\varsh\OneDrive\Desktop\Neurofeedback MNE-PsychoPy\pow-change.npy", pow_change_values)
+                    print("Exiting and saving data")
+                    break
                 # Get new data every time the update timer reaches zero
                 if update_timer.getTime() <= 0:
                     print(f'Got epoch {epoch_count}')
@@ -120,32 +127,41 @@ if __name__ == '__main__':
                     pow_change_values.append(power_change)
                     
                     # Reset update timer for the next 0.5 seconds
-                    update_timer.reset(update_interval)
+                    #update_timer.reset(update_interval)
                     
                     epoch_count += 1
                 
                 # Check if 'escape' is pressed to exit
-                if event.getKeys(['escape']):
-                    running = False
-                    break
+                # if event.getKeys(['escape']):
+                #     running = False
+                #     np.save(r"C:\Users\varsh\OneDrive\Desktop\Neurofeedback MNE-PsychoPy\pow-change.npy", pow_change_values)
+                #     break
                 
                 # Draw the circle with the updated radius if there's power change data
                 if len(pow_change_values) > 0:
                     current_power_change = pow_change_values[-1]  # Select the last power change value
                     new_radius = np.interp(np.mean(current_power_change), [0, 100], [min_radius, max_radius])
-                    print(f'Updated radius: {new_radius}')
+                    #print(f'Updated radius: {new_radius}')
                     
-                    # Update the circle's radius
-                    mycir.radius = new_radius
+                    # Update the circle's radius as feedback value
+                    feedbackVal = print(f'The feedback value is: {new_radius}')
                     
                 # Draw the updated circle and flip the window to make changes visible
                 sqr.draw()
                 mycir.draw()
-                line1.draw()
-                line2.draw()
+                #line1.draw()
+                #line2.draw()
                 
                 mywin.flip()
 
 print('Streams closed')
 mywin.close()
 core.quit()
+
+#%%
+while running:
+    if event.getKeys(['escape']):
+        running = False
+        np.save(r"C:\Users\varsh\OneDrive\Desktop\Neurofeedback MNE-PsychoPy\pow-change.npy", pow_change_values)
+        break
+

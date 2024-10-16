@@ -115,7 +115,7 @@ if __name__ == '__main__':
                     #Draw the updated plot
                     plt.draw()
                     #Pause to update the plot in realtime
-                    plt.pause(0.1) #changed from 0.25
+                    plt.pause(0.1) #changed from 0.25 to 0.1
                     epoch_count += 1
             plt.show()
            
