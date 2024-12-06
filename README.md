@@ -13,3 +13,12 @@ automatically rejection bad channels and perform ICA for baseline calibration. T
    + mne-icalabel      0.7.0 (requires sklearn version 1.5.1)
 3. LSL (https://github.com/sccn/liblsl) and pylsl (https://github.com/chkothe/pylsl)
 4. PsychoPy version 2024.2.1 (https://www.psychopy.org/download.html)
+
+
+## Folders
+Offline codes: 
+   + Contains the codes for realtime mock LSL streaming of raw EEG, PSD and relative PSD. No          prepropressing done here. 
+   + Also contains the basic paradigms running on mock LSL stream
+Final codes:
+   + contains the codes that work on Real-time LSL stream of EEG signal with preprocessing
+   + also contains preprocessing file 
