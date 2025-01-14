@@ -22,7 +22,7 @@ matplotlib.use('QtAgg')
 from pyprep.find_noisy_channels import NoisyChannels
 from asrpy import ASR
 
-#%% BASELINE CALIBRATION
+# BASELINE CALIBRATION
 # The host id that identifies the stream of interest on LSL
 host = 'openbcigui'
 # This is the max wait time in seconds until client connection
@@ -162,7 +162,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
             # Applying baseline correction 
             epoch.apply_baseline(baseline=(0, None)) 
             data = np.squeeze(epoch.get_data())
-            
+
             # Applying all the required preprocessing steps on realtime stream 
             raw_realtime = mne.io.RawArray(data, client_info)
             raw_realtime.rename_channels(rename_dict)
