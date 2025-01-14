@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import mne
-from mne.preprocessing import ica
+from mne.preprocessing import ICA
 from mne_icalabel import label_components
 from mne import EpochsArray
 from mne.baseline import rescale
@@ -28,7 +28,7 @@ host = 'openbcigui'
 # This is the max wait time in seconds until client connection
 wait_max = 5
 
-raw = mne.io.read_raw_fif(r"") # Load the raw EEG baseline calibration
+raw = mne.io.read_raw_fif(r"", preload=True) # Load the raw EEG baseline calibration
 # Apply notch filter to remove power-line noise and bandpass filter the signal
 raw.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
 # Apply EEG re-referencing
@@ -62,7 +62,7 @@ raw.set_montage(montage)
 # Apply notch filter to remove powerline noise and bandpass filter
 raw.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
 
-#%% PREPROCESSING
+# PREPROCESSING
 # Bad channels detection and rejection using PREP pipeline RANSAC algorithm
 nd = NoisyChannels(raw, random_state=1337)
 
@@ -76,10 +76,10 @@ asr.fit(raw)
 raw = asr.tranform(raw)
 
 # ICA to detect and remove independent components like eye-blinks, ECG, muscle artifacts
-ic = ica(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
-ic.fit(raw)
+ica = ICA(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
+ica.fit(raw)
 
-labels = label_components(raw, ic, 'iclabel')
+labels = label_components(raw, ica, 'iclabel')
 component_labels = labels['labels']
 component_probs = labels['y_pred_proba']
 artifact_components = []
@@ -92,16 +92,14 @@ ica_weights = ica.unmixing_matrix_
 ica_inverse_weights = ica.mixing_matrix_
 print("flagged artifact components: ", artifact_components)
 
-raw_cleaned = ic.apply(raw.copy(), exclude=artifact_components)
+raw_cleaned = ica.apply(raw.copy(), exclude=artifact_components)
 
-# Loop variables for visual output of the clean raw EEG data in realtime
-ch_names = ['Ch1', 'Ch2', 'Ch3', 'Ch4', 'Ch5', 'Ch6', 'Ch7', 'Ch8', 'Ch9', 'Ch10', 'Ch11', 'Ch']
+ch_names = list(rename_dict.values())
 
 fig, axs = plt.subplots(len(ch_names), 1, figsize=(10,12), sharex=True)
 plt.subplots_adjust(hspace=0.5)
 
-#%% VISUALIZATION 
-
+# VISUALIZATION 
 # Create a window
 mywin = visual.Window([1920, 1080], monitor="TestMonitor", color=[0,0,0], fullscr=True, units="deg")
 # Create fixation cross
@@ -123,14 +121,14 @@ step = 0.01 # in seconds
 time_window = 5 # in seconds
 n_channels = 2
 feed_ch_names = ['O1']
-low_freq = 8
+low_freq = 8 # alpha band
 high_freq = 12
 
 # Timer for updating the circle radius every 0.5 seconds
 update_interval = 0.5
 update_timer = core.CountdownTimer(update_interval)
 
-#%% MAIN LOOP FOR REALTIME STREAM
+#MAIN LOOP FOR REALTIME STREAM
 # Main loop variable
 epoch_count = 0 # Initialize epoch couter
 running = True
@@ -164,6 +162,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
             # Applying baseline correction 
             epoch.apply_baseline(baseline=(0, None)) 
             data = np.squeeze(epoch.get_data())
+            
             # Applying all the required preprocessing steps on realtime stream 
             raw_realtime = mne.io.RawArray(data, client_info)
             raw_realtime.rename_channels(rename_dict)

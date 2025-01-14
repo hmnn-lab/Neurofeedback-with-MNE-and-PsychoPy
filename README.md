@@ -19,7 +19,6 @@ automatically rejection bad channels and perform ICA for baseline calibration. T
 1. Offline codes: 
    + Contains the codes for realtime mock LSL streaming of raw EEG, PSD and relative PSD. No          prepropressing done here. 
    + Also contains the basic paradigms running on mock LSL stream
-
 2. Final codes:
    + contains the codes that work on Real-time LSL stream of EEG signal with preprocessing
    + also contains preprocessing file 
