@@ -37,20 +37,20 @@ raw.set_eeg_reference('average')
 rename_dict = {
     'EEG 001': 'Pz',
     'EEG 002': 'T8',
-    'EEG 003': 'T5',
+    'EEG 003': 'P3',
     'EEG 004': 'C3',
     'EEG 005': 'Fp1',
     'EEG 006': 'Fp2',
     'EEG 007': 'O1',
     'EEG 008': 'P4',
     'EEG 009': 'Fz',
-    'EEG 0010': 'F7',
-    'EEG 0011': 'C4',
-    'EEG 0012': 'T4',
-    'EEG 0013': 'F3',
-    'EEG 0014': 'F4',
-    'EEG 0015': 'Cz',
-    'EEG 0016': 'T3',
+    'EEG 010': 'F7',
+    'EEG 011': 'C4',
+    'EEG 012': 'O2',
+    'EEG 013': 'F3',
+    'EEG 014': 'F4',
+    'EEG 015': 'Cz',
+    'EEG 016': 'T3',
     }
 raw.rename_channels(rename_dict)
 # Store the number of channels 

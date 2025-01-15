@@ -44,13 +44,13 @@ rename_dict = {
     'EEG 007': 'O1',
     'EEG 008': 'P4',
     'EEG 009': 'Fz',
-    'EEG 0010': 'F7',
-    'EEG 0011': 'C4',
-    'EEG 0012': 'O2',
-    'EEG 0013': 'F3',
-    'EEG 0014': 'F4',
-    'EEG 0015': 'Cz',
-    'EEG 0016': 'T3',
+    'EEG 010': 'F7',
+    'EEG 011': 'C4',
+    'EEG 012': 'O2',
+    'EEG 013': 'F3',
+    'EEG 014': 'F4',
+    'EEG 015': 'Cz',
+    'EEG 016': 'T3',
     }
 raw.rename_channels(rename_dict)
 # Store the number of channels 
@@ -122,8 +122,8 @@ time_window = 5 # in seconds
 n_channels = 2
 feed_ch_names = ['O1']
 freq_band_1 = (4, 7) # First freq band (theta)
-high_freq = (8, 12) # second freq band (alpha)
-frequency_bands = [freq_band_1, high_freq]
+freq_band_2 = (8, 12) # second freq band (alpha)
+frequency_bands = [freq_band_1, freq_band_2]
 
 # Timer for updating the circle radius every 0.5 seconds
 update_interval = 0.5
