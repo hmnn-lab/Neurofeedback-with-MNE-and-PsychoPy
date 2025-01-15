@@ -8,7 +8,7 @@ Created on Wed Nov 20 20:23:13 2024
 import numpy as np
 import matplotlib.pyplot as plt
 import mne
-from mne.preprocessing import ica
+from mne.preprocessing import ICA
 from mne_icalabel import label_components
 from mne import EpochsArray
 from mne.baseline import rescale
@@ -39,13 +39,13 @@ rename_dict = {
     'EEG 007': 'O1',
     'EEG 008': 'P4',
     'EEG 009': 'Fz',
-    'EEG 0010': 'F7',
-    'EEG 0011': 'C4',
-    'EEG 0012': 'T4',
-    'EEG 0013': 'F3',
-    'EEG 0014': 'F4',
-    'EEG 0015': 'Cz',
-    'EEG 0016': 'T3',
+    'EEG 010': 'F7',
+    'EEG 011': 'C4',
+    'EEG 012': 'T4',
+    'EEG 013': 'F3',
+    'EEG 014': 'F4',
+    'EEG 015': 'Cz',
+    'EEG 016': 'T3',
     }
 raw.rename_channels(rename_dict)
 # Store the number of channels 
@@ -67,10 +67,10 @@ asr.fit(raw)
 raw = asr.tranform(raw)
 
 # ICA to detect and remove independent components like eye-blinks, ECG, muscle artifacts
-ic = ica(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
-ic.fit(raw)
+ica = ICA(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
+ica.fit(raw)
 
-labels = label_components(raw, ic, 'iclabel')
+labels = label_components(raw, ica, 'iclabel')
 component_labels = labels['labels']
 component_probs = labels['y_pred_proba']
 artifact_components = []
@@ -84,7 +84,7 @@ ica_inverse_weights = ica.mixing_matrix_
 print("flagged artifact components: ", artifact_components)
 
 # Loop variables for visual output of the clean raw EEG data in realtime
-ch_names = ['Ch1', 'Ch2', 'Ch3', 'Ch4', 'Ch5', 'Ch6', 'Ch7', 'Ch8', 'Ch9', 'Ch10', 'Ch11', 'Ch']
+ch_names = list(rename_dict.values())
 # Initialize epoch couter
 epoch_count = 0
 running = True
