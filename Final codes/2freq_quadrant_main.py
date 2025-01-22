@@ -73,7 +73,7 @@ raw.info['bads'].extend(bad_channels)
 # Artifact Subspace Reconstruction (ASR) to detect and reject non-bio artifacts
 asr = ASR(sfreq=raw.info['sfreq']) 
 asr.fit(raw)
-raw = asr.tranform(raw)
+raw = asr.transform(raw)
 
 # ICA to detect and remove independent components like eye-blinks, ECG, muscle artifacts
 ica = ICA(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
