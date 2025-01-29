@@ -21,7 +21,7 @@ from datetime import datetime
 
 # BASELINE CALIBRATION
 # The host id that identifies the stream of interest on LSL
-host = 'Signal_generator'
+host = 'openbcigui'
 # This is the max wait time in seconds until client connection
 wait_max = 5
 
@@ -73,14 +73,14 @@ raw.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
 # Bad channels detection and rejection using PREP pipeline RANSAC algorithm
 nd = NoisyChannels(raw, random_state=1337)
 
-nd.find_bad_ransac(channel_wise=True, max_chunk_size=1, sample_prop=0.5)
+nd.find_bad_by_ransac(channel_wise=True, max_chunk_size=1, sample_prop=0.5)
 bad_channels = nd.bad_by_ransac
 raw.info['bads'].extend(bad_channels)
 
 # Artifact Subspace Reconstruction (ASR) to detect and reject non-bio artifacts
 asr = ASR(sfreq=raw.info['sfreq']) 
 asr.fit(raw)
-raw = asr.tranform(raw)
+raw = asr.transform(raw)
 
 # ICA to detect and remove independent components like eye-blinks, ECG, muscle artifacts
 ica = ICA(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
@@ -132,8 +132,8 @@ def echt(xr, filt_lf, filt_hf, Fs, n=None):
     amplitude = np.abs(analytic_signal)
     return analytic_signal, phase, amplitude
 
-#fig, axs = plt.subplots(len(ch_names), 1, figsize=(10,12), sharex=True)
-#plt.subplots_adjust(hspace=0.5)
+fig, axs = plt.subplots(len(ch_names), 1, figsize=(10,12), sharex=True)
+plt.subplots_adjust(hspace=0.5)
 
 # VISUALIZATION 
 # Create a window

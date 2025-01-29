@@ -87,9 +87,6 @@ if __name__ == '__main__':
             mywin.flip()  # Flip window to reflect changes
 
         # plt.draw()
-mywin.close() #closing the psychopy window
-core.quit()
-
 info = mne.create_info(ch_names=client_info['ch_names'], 
                    sfreq=client_info['sfreq'], 
                    ch_types='eeg')
@@ -98,3 +95,5 @@ data = np.squeeze(data)
 raw = mne.io.RawArray(data, info)
 raw.save(r'C:/Users/Admin/Desktop/Varsha/mne-psychopy-codes/baseline-data-priya-raw.fif', overwrite=True)
 print('Streams closed')
+mywin.close() #closing the psychopy window
+core.quit()
