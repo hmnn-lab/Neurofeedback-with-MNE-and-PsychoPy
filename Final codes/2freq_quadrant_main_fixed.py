@@ -117,8 +117,8 @@ mywin = visual.Window([500, 500], monitor="TestMonitor", color=[-1, -1, -1], ful
 window_width, window_height = mywin.size
 
 # Creating the quadrant lines
-line1 = visual.Line(win=mywin, start=(-window_width / 2, 0), end=(window_width / 2, 0), units='pix', lineWidth=2.0, pos=(0, 0), color=(-1, -1, -1), name='X-axis')
-line2 = visual.Line(win=mywin, start=(0, -window_height / 2), end=(0, window_height / 2), units='pix', lineWidth=2.0, pos=(0, 0), color=(-1, -1, -1), name='Y-axis')
+line1 = visual.Line(win=mywin, start=(-window_width / 2, 0), end=(window_width / 2, 0), units='pix', lineWidth=2.0, pos=(0, 0), color=(-1, -1, -1))
+line2 = visual.Line(win=mywin, start=(0, -window_height / 2), end=(0, window_height / 2), units='pix', lineWidth=2.0, pos=(0, 0), color=(-1, -1, -1))
 #x_label = visual.TextStim(mywin, 'X (theta)', pos=(color=(1, 1, 1), height=20, units='pix')
 #y_label = visual.TextStim(mywin, 'Y (alpha)', color=(1, 1, 1), height=20, units='pix', ori=90)
 
@@ -150,7 +150,7 @@ update_timer = core.CountdownTimer(update_interval)
 
 #%% MAIN LOOP FOR REALTIME STREAM
 # Main loop variable
-epoch_count = 0  # Initialize epoch counter
+epoch_count = 1  # Initialize epoch counter
 running = True
 feedback_data = []  # Initialize feedback data list
 

@@ -132,8 +132,8 @@ def echt(xr, filt_lf, filt_hf, Fs, n=None):
     amplitude = np.abs(analytic_signal)
     return analytic_signal, phase, amplitude
 
-fig, axs = plt.subplots(len(ch_names), 1, figsize=(10,12), sharex=True)
-plt.subplots_adjust(hspace=0.5)
+#fig, axs = plt.subplots(len(ch_names), 1, figsize=(10,12), sharex=True)
+#plt.subplots_adjust(hspace=0.5)
 
 # VISUALIZATION 
 # Create a window
@@ -150,14 +150,6 @@ min_radius = 2
 
 # Create keyboard component
 kb = keyboard.Keyboard()
-
-
-
-mycir.draw()
-fixation.draw()  
-freq_band_name.draw()         
-mywin.flip()
-mywin.close()
 
 #EEG parameters
 step = 0.01 # in seconds
@@ -184,11 +176,11 @@ results = []
 with LSLClient(info=None, host=host, wait_max=wait_max) as client:
     client_info = client.get_measurement_info()
     sfreq = int(client_info['sfreq'])
-    
+    print("LSLClient started, sampling frequency:", sfreq)
+
     while running:
-        print(f'Got epoch {epoch_count}')
-        
-        keys = event.getKeys()
+        #Checking for keyboard input
+        keys = kb.getKeys()
         if 'escape' in keys:
             running = False
             print("Exiting...")
@@ -224,6 +216,9 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
             # Scale the radius based on mvl_abs
             scaled_radius = min_radius + (mvl_abs * (max_radius - min_radius))
 
+            update_timer.reset(update_interval)
+            epoch_count += 1
+
             # Update the circle's radius and redraw
             mycir.radius = scaled_radius
             mywin.clearBuffer()
@@ -240,12 +235,9 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
                 "MVL Absolute Value": mvl_abs,
                 })
 
-            update_timer.reset(update_interval)
-            epoch_count += 1
-
     if results:
         results_df = pd.DataFrame(results)
-        results_df.to_excel(r"C:\Users\varsh\NFB_Spyder\real_time_mvl_results.xlsx", index=False)
+        results_df.to_excel(r".xlsx", index=False)
         print("Results saved to 'real_time_mvl_results.xlsx'.")
 # to reflect the changes
 print('Streams closed')
