@@ -33,8 +33,8 @@ wait_max = 5
 # Load a file to stream raw data
 
 
-#ch_names = ['Ch1', 'Ch2', 'Ch3', 'Ch4', 'Ch5', 'Ch6', 'Ch7', 'Ch8', 'Ch9', 'Ch10', 'Ch11', 'Ch12', 'Ch13', 'Ch14', 'Ch15', 'Ch16']
-ch_names = ['Pz','T8','P3','C3','Fp1','Fp2','O1','P4','Fz','F7','C4','O2','F3','F4','Cz','T3']
+ch_names = ['Ch1', 'Ch2', 'Ch3', 'Ch4', 'Ch5', 'Ch6', 'Ch7', 'Ch8', 'Ch9', 'Ch10', 'Ch11', 'Ch12', 'Ch13', 'Ch14', 'Ch15', 'Ch16']
+#ch_names = ['Pz','T8','P3','C3','Fp1','Fp2','O1','P4','Fz','F7','C4','O2','F3','F4','Cz','T3']
 
 running = True
 duration = 60 #in seconds
