@@ -11,6 +11,7 @@ from psychopy.hardware import keyboard
 import pyxdf
 import numpy as np
 import pandas as pd
+from datetime import datetime
 import matplotlib.pyplot as plt
 import mne_realtime
 from mne_realtime import LSLClient, MockLSLStream
@@ -19,7 +20,7 @@ import mne
 
 
 # Create a window
-mywin = visual.Window([1280, 720], monitor="TestMonitor", color=[-1, -1, -1], fullscr=True, units="cm")
+mywin = visual.Window([720, 720], monitor="TestMonitor", color=[-1, -1, -1], fullscr=False, units="cm")
 
 # Create quadrant lines
 line1 = visual.Line(win=mywin, start=(20, 0), end=(-20, 0), units='cm', lineWidth=2.0, pos=(0, 0), color=(-1, -1, -1), name='X-axis')
@@ -53,6 +54,7 @@ ch_names = ['Ch1', 'Ch2']
 freq_band_1 = (4, 7)  # First band (Theta)
 freq_band_2 = (8, 12)  # Second band (Alpha)
 
+
 data = streams[0]["time_series"].T
 data = data[:n_channels]
 
@@ -74,6 +76,17 @@ pow_change_values_band_2 = []
 # Timer for updating the red dot position
 update_interval = 0.5  # seconds
 update_timer = core.CountdownTimer(update_interval)
+
+# EEG parameters dictionary
+eeg_params = {
+    "Step (s)": step,
+    "Time Window (s)": time_window,
+    "Number of Channels": n_channels,
+    #"Feed Channels": ', '.join(feed_ch_names),
+    "Frequency Band 1 (Theta)": f"{freq_band_1}",
+    "Frequency Band 2 (Alpha)": f"{freq_band_2}",
+    "Update Interval (s)": update_interval
+}
 
 # Prepare feedback data storage
 feedback_data = []
@@ -154,8 +167,20 @@ if __name__ == '__main__':
                 mywin.flip()
 
 # Save feedback data to Excel
-feedback_df = pd.DataFrame(feedback_data)
-feedback_df.to_excel('feedback_data.xlsx', index=False)
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+filename = f"EEG_Feedback_{timestamp}.xlsx"
+
+# Convert feedback data to a DataFrame
+df_feedback = pd.DataFrame(feedback_data)
+
+# Save EEG parameters and feedback data
+with pd.ExcelWriter(filename, engine='xlsxwriter') as writer:
+    # Save EEG parameters in the first sheet
+    df_params = pd.DataFrame(list(eeg_params.items()), columns=["Parameter", "Value"])
+    df_params.to_excel(writer, sheet_name="EEG Parameters", index=False)
+
+    # Save feedback data in another sheet
+    df_feedback.to_excel(writer, sheet_name="Feedback Data", index=False)
 
 # Close streams and PsychoPy window
 print('Streams closed')

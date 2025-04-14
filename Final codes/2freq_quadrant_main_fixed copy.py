@@ -26,11 +26,11 @@ from asrpy import ASR
 
 ###### BASELINE CALIBRATION #####
 # The host id that identifies the stream of interest on LSL
-host = 'openbcigui'
+host = 'Signal_generator_EEG_16_250.0_float32_Vgram'
 # This is the max wait time in seconds until client connection
 wait_max = 5
 
-raw = mne.io.read_raw_fif(r"C:\Users\Admin\Desktop\Varsha\mne-psychopy-codes\baseline-data-rashi4-raw.fif", preload=True) # Load the raw EEG baseline calibration
+raw = mne.io.read_raw_fif(r"C:\Users\varsh\OneDrive\Desktop\NFB-MNE-Psy\base.fif", preload=True) # Load the raw EEG baseline calibration
 # Apply notch filter to remove power-line noise and bandpass filter the signal
 raw.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
 # Apply EEG re-referencing
@@ -126,7 +126,7 @@ line2 = visual.Line(win=mywin, start=(0, -window_height / 2), end=(0, window_hei
 # Create text stimuli for frequency band names
 freq_band_1_name = visual.TextStim(win=mywin, text="Theta (4-7 Hz)", pos=(0, -30), color=(1, 1, 1), opacity=0.75, anchorHoriz='left', anchorVert='center', height=10, ori=0.0)
 freq_band_2_name = visual.TextStim(win=mywin, text="Alpha (8-12 Hz)", pos=(-30, 0), color=(1, 1, 1), opacity=0.75, anchorHoriz='center', anchorVert='bottom', height=10, ori=90.0)
-
+feedback_text = visual.TextStim(mywin, text="Feedback: 0.00", color="white", pos=(0, -200), height=30)
 # Creating a moving red dot 
 dot = visual.Circle(win=mywin, radius=20, edges=128, fillColor='red', lineColor='white', pos=(0,0))
 
@@ -220,6 +220,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
                 'Epoch': epoch_count,
                 **{f"Band {i + 1} Power Change (%)": power_changes[i] for i in range(len(frequency_bands))}
             })
+            feedback_text.text = f"Feedback: {feedback_data:.2f}"
 
             # Update visualization based on power changes
 
@@ -236,6 +237,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
             dot.draw()
             freq_band_1_name.draw()
             freq_band_2_name.draw()
+            feedback_text.draw()
             line1.draw()
             line2.draw()
             mywin.flip()

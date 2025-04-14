@@ -167,7 +167,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
 
             # preprocessing of realtime stream based on the calibarated data
             raw_realtime = mne.io.RawArray(data,client_info)
-            raw_realtime.rename_channels(rename_dict)
+            #raw_realtime.rename_channels(rename_dict)
             raw_realtime.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
             raw_realtime.info['bads'].extend(bad_channels)
             raw_realtime_asr = asr.transform(raw_realtime)

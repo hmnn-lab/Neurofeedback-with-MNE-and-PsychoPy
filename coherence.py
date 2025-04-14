@@ -81,4 +81,4 @@ plt.axvspan(freq_band_2[0], freq_band_2[1], color='blue', alpha=0.2, label="Alph
 plt.legend()
 
 plt.tight_layout()
-plt.show()
+plt.show() 

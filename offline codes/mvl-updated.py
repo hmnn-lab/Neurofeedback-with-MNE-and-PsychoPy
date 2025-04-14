@@ -98,6 +98,7 @@ if __name__ == '__main__':
 
                 while running:
                     if update_timer.getTime() <= 0:
+                        
                         print(f"Fetching epoch {epoch_count}")
                         epoch = client.get_data_as_epoch(n_samples=int(time_window * sfreq))
                         data, times = epoch.get_data(picks="eeg")[0], epoch.times

@@ -19,52 +19,48 @@ from pyprep.find_noisy_channels import NoisyChannels
 from asrpy import ASR
 
 # The host id that identifies the stream of interest on LSL
-host = 'openbcigui'
+host = 'Signal_generator_EEG_16_250.0_float32_Vgram'
 # This is the max wait time in seconds until client connection
 wait_max = 5
 
-raw = mne.io.read_raw_fif(r"") # Load the raw EEG baseline calibration
+raw = mne.io.read_raw_fif(r"C:\Users\varsh\OneDrive\Desktop\NFB-MNE-Psy\baseline-raw.fif", preload=True) # Load the raw EEG baseline calibration
 # Apply notch filter to remove power-line noise and bandpass filter the signal
 raw.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
 # Apply EEG re-referencing
 raw.set_eeg_reference('average')
 # Create a dictionary for renaming the electrodes to fit according to standard montage
-rename_dict = {
-    'EEG 001': 'Pz',
-    'EEG 002': 'T8',
-    'EEG 003': 'T5',
-    'EEG 004': 'C3',
-    'EEG 005': 'Fp1',
-    'EEG 006': 'Fp2',
-    'EEG 007': 'O1',
-    'EEG 008': 'P4',
-    'EEG 009': 'Fz',
-    'EEG 010': 'F7',
-    'EEG 011': 'C4',
-    'EEG 012': 'T4',
-    'EEG 013': 'F3',
-    'EEG 014': 'F4',
-    'EEG 015': 'Cz',
-    'EEG 016': 'T3',
-    }
+rename_list_1 = ["'Pz'", "'T8'", "'P3'", "'C3'", "'Fp1'", "'Fp2'", "'O1'", "'P4'", "'Fz'", "'F7'", "'C4'", "'O2'", "'F3'", "'F4'", "'Cz'", "'T3'"]
+rename_list_2 = ['Pz', 'T8', 'P3', 'C3', 'Fp1', 'Fp2', 'O1', 'P4', 'Fz', 'F7', 'C4', 'O2', 'F3', 'F4', 'Cz', 'T3']
+rename_dict = dict(zip(rename_list_1, rename_list_2))
+# Get the number of channels
+n_channels = len(raw.ch_names)
 raw.rename_channels(rename_dict)
-# Store the number of channels 
-n_channels = len(rename_dict.keys())
-# Set the montage 
+# Define a standard 10-20 montage
 montage = mne.channels.make_standard_montage('standard_1020')
+
+# Extract standard 10-20 names up to the required number of channels
+#standard_1020_names = montage.ch_names[:n_channels]
+
+# Create a rename dictionary dynamically
+#rename_dict = {raw.ch_names[i]: standard_1020_names[i] for i in range(n_channels)}
+
+# Apply renaming
+
+
+# Set the standard 10-20 montage
 raw.set_montage(montage)
 
 # Bad channels detection and rejection using PREP pipeline RANSAC algorithm
 nd = NoisyChannels(raw, random_state=1337)
 
-nd.find_bad_ransac(channel_wise=True, max_chunk_size=1)
+nd.find_bad_by_ransac(channel_wise=True, max_chunk_size=1)
 bad_channels = nd.bad_by_ransac
 raw.info['bads'].extend(bad_channels)
 
 # Artifact Subspace Reconstruction (ASR) to detect and reject non-bio artifacts
 asr = ASR(sfreq=raw.info['sfreq']) 
 asr.fit(raw)
-raw = asr.tranform(raw)
+raw = asr.transform(raw)
 
 # ICA to detect and remove independent components like eye-blinks, ECG, muscle artifacts
 ica = ICA(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
@@ -95,6 +91,7 @@ plt.subplots_adjust(hspace=0.5)
 # Main loop for streaming of clean preprocessed EEG thru LSL
 with LSLClient(info=None, host=host, wait_max=wait_max) as client:
     client_info = client.get_measurement_info()
+    ch_names = client_info['ch_names']
     sfreq = int(client_info['sfreq'])
     
     while running:
@@ -108,7 +105,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
         data = np.squeeze(epoch.get_data())
         # Applying all the required preprocessing steps on realtime stream 
         raw_realtime = mne.io.RawArray(data, client_info)
-        raw_realtime.rename_channels(rename_dict)
+        #raw_realtime.rename_channels(rename_dict)
         raw_realtime.info['bads'].extend(bad_channels)
         raw_realtime_asr = asr.transform(raw_realtime)
         raw_realtime_asr_ica = ica.apply(raw_realtime_asr, exclude=artifact_components)

@@ -11,14 +11,14 @@ from mne import create_info
 import numpy as np
 
 #Define the stream name 
-stream_name = '' #Replace with your actual stream name
+stream_name = 'Signal_generator' #Replace with your actual stream name
 n_channels = 16 #Adjust according to your stream
 sampling_rate = 250 #Adjust based on your stream
 
 # Create info object
 info = create_info(ch_names=[f'EEG {i}'for i in range(n_channels)], 
-                   sfreq=sampling_rate,
-                   ch_type='eeg')
+                   sfreq=sampling_rate
+                   )
 #Create an LSL Client and start pulling data
 with LSLClient(info=info, host=stream_name) as client:
     client.start_acquisition()
@@ -46,5 +46,5 @@ with LSLClient(info=info, host=stream_name) as client:
     raw = mne.io.RawArray(all_data, info)
     
     #Save the data to a file
-    raw.save('lsl_eeg_data.fif', overwrite=True)    
+    raw.save(r'C:\Users\varsh\OneDrive\Desktop\NFB-MNE-Psy\dummy-baeline.fif', overwrite=True)    
 
