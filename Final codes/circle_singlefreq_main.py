@@ -66,14 +66,14 @@ raw.notch_filter(50, picks='eeg').filter(l_freq=0.1, h_freq=40)
 # Bad channels detection and rejection using PREP pipeline RANSAC algorithm
 nd = NoisyChannels(raw, random_state=1337)
 
-nd.find_bad_ransac(channel_wise=True, max_chunk_size=1)
+nd.find_bad_by_ransac(channel_wise=True, max_chunk_size=1)
 bad_channels = nd.bad_by_ransac
 raw.info['bads'].extend(bad_channels)
 
 # Artifact Subspace Reconstruction (ASR) to detect and reject non-bio artifacts
 asr = ASR(sfreq=raw.info['sfreq']) 
 asr.fit(raw)
-raw = asr.tranform(raw)
+raw = asr.transform(raw)
 
 # ICA to detect and remove independent components like eye-blinks, ECG, muscle artifacts
 ica = ICA(n_components=n_channels-len(bad_channels), method='infomax', max_iter=500, random_state=42)
@@ -108,7 +108,7 @@ fixation = visual.ShapeStim(mywin, vertices=((0, -1), (0, 0), (-1, 0), (1, 0)), 
 # Create square window and circle
 sqr = visual.Rect(win=mywin, size=[20, 20], fillColor='black', pos=(0.0, 0.0))
 mycir = visual.Circle(win=mywin, radius=5.0, edges=128, lineWidth=1.5, lineColor='White', fillColor='red', pos=(0, 0))
-
+freq_band_name = visual.TextStim(win=mywin, text="Alpha (8-12 Hz)", pos=(-30, 0), color=(1, 1, 1), opacity=0.75, anchorHoriz='center', anchorVert='bottom', height=10, ori=0.0)
 # Parameters for smooth radius change
 max_radius = 10
 min_radius = 2
@@ -179,7 +179,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
             power_whole = power.sum()
             
             # Frequency indices and boundaries
-            frq = psd._freqs
+            freq = psd._freqs
             low_freq_ind = (abs(freq - low_freq)).argmin()
             high_frq_ind = (abs(freq - high_freq)).argmin()
             
@@ -207,6 +207,7 @@ with LSLClient(info=None, host=host, wait_max=wait_max) as client:
         sqr.draw()
         mycir.draw()
         fixation.draw()
+        freq_band_name.draw()
         
         mywin.flip() # to reflect the changes
 mywin.close()

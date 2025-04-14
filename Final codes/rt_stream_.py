@@ -4,7 +4,7 @@ Created on Wed Nov 20 20:08:15 2024
 
 @author: varsh
 """
-
+########## IT IS A BASE CODE #############
 import mne
 from mne_realtime import LSLClient
 from mne import create_info
