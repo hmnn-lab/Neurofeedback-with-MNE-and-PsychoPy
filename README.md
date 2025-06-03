@@ -27,5 +27,5 @@ The paradigms include: Relative power based-single frequency circle, relative po
    + separate file for baseline recording and calibration
 3. New_run_codes:
    + contains functions of each step of the NFB along with the integrated game.
-4. Game and code:
-   + contains the currently designed game on Unity and its logic code.
+4. Scripts:
+   + contains the C# codes used for urrently designed game on Unity.
