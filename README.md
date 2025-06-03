@@ -16,7 +16,7 @@ The paradigms include: Relative power based-single frequency circle, relative po
 4. PsychoPy version 2024.2.1 (https://www.psychopy.org/download.html)
 5. Python preprocessing module pyprep (https://github.com/sappelhoff/pyprep) for bad channel rejection
 6. Artifact subspace reconstruction (ASR) asrpy (https://github.com/DiGyt/asrpy)
-
+7. Unity (using 6000.0.36f1) and Microsoft Visual Studio for C# codes
 
 ## Folders
 1. Offline codes: 
@@ -25,3 +25,7 @@ The paradigms include: Relative power based-single frequency circle, relative po
 2. Final codes:
    + contains the paradigm codes that work on Real-time LSL stream of EEG signal with preprocessing
    + separate file for baseline recording and calibration
+3. New_run_codes:
+   + contains functions of each step of the NFB along with the integrated game.
+4. Game and code:
+   + contains the currently designed game on Unity and its logic code.
